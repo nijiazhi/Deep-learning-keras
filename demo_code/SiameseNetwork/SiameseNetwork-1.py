@@ -57,10 +57,8 @@ def FeatureNetwork():
 def ClassiFilerNet():
     """
     生成度量网络和决策网络
-
     其实MatchNet是两个网络结构，一个是特征提取层(孪生)，一个度量层+匹配层(统称为决策层)
     """
-
     input1 = FeatureNetwork()                     # 孪生网络中的一个特征提取
     input2 = FeatureNetwork()                     # 孪生网络中的另一个特征提取
     for layer in input2.layers:                   # 这个for循环一定要加，否则网络重名会出错。
@@ -68,6 +66,8 @@ def ClassiFilerNet():
 
     inp1 = input1.input
     inp2 = input2.input
+    print(type(inp1), type(inp2))
+    print(inp1, inp2)
     merge_layers = concatenate([input1.output, input2.output])        # 进行融合，使用的是默认的sum，即简单的相加
     fc1 = Dense(1024, activation='relu')(merge_layers)
     fc2 = Dense(1024, activation='relu')(fc1)
@@ -80,4 +80,5 @@ def ClassiFilerNet():
 # ---------------------主调区-------------------------
 match_net = ClassiFilerNet()
 match_net.summary()  # 打印网络结构
+
 plot_model(match_net, to_file='./match_net-1.png', show_shapes=True)  # 网络结构输出成png图片
